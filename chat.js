@@ -1,33 +1,71 @@
-const API_KEY = "YOUR_API_KEY";
+const chatForm = document.getElementById("chat-form");
+const userInput = document.getElementById("user-input");
+const chatBox = document.getElementById("chat-box");
+const clearChatBtn = document.getElementById("clear-chat");
+const modelSelect = document.getElementById("model-select");
 
-async function sendMessage(){
+function appendMessage(role, text) {
+  const messageRow = document.createElement("div");
+  messageRow.className = `message ${role}`;
 
-let input = document.getElementById("user-input");
-let chatBox = document.getElementById("chat-box");
+  const messageContent = document.createElement("div");
+  messageContent.className = "message-content";
+  messageContent.textContent = text;
 
-let userMessage = input.value;
-
-chatBox.innerHTML += `<div>You: ${userMessage}</div>`;
-
-input.value = "";
-
-const response = await fetch("https://api.groq.com/openai/v1/chat/completions",{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer " + API_KEY
-},
-body:JSON.stringify({
-model:"llama3-8b-8192",
-messages:[
-{role:"user",content:userMessage}
-]
-})
-});
-
-const data = await response.json();
-
-let reply = data.choices[0].message.content;
-
-chatBox.innerHTML += `<div>AI: ${reply}</div>`;
+  messageRow.appendChild(messageContent);
+  chatBox.appendChild(messageRow);
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
+
+function clearChat() {
+  chatBox.innerHTML = "";
+}
+
+async function sendMessage(event) {
+  if (event) event.preventDefault();
+
+  const userMessage = userInput.value.trim();
+
+  if (!userMessage) {
+    return;
+  }
+
+  appendMessage("user", userMessage);
+  userInput.value = "";
+  userInput.focus();
+
+  const loadingMessage = document.createElement("div");
+  loadingMessage.className = "message bot";
+  const loadingContent = document.createElement("div");
+  loadingContent.className = "message-content";
+  loadingContent.textContent = "Thinking...";
+  loadingMessage.appendChild(loadingContent);
+  chatBox.appendChild(loadingMessage);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: userMessage,
+        model: modelSelect.value
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data?.error || 'Failed to get a response.');
+    }
+
+    loadingContent.textContent = data.reply;
+  } catch (error) {
+    loadingContent.textContent = error.message || 'Something went wrong.';
+  }
+}
+
+chatForm.addEventListener("submit", sendMessage);
+clearChatBtn.addEventListener("click", clearChat);
