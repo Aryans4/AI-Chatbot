@@ -1,21 +1,25 @@
 # AI Chatbot 🤖
 
-A simple web-based AI chatbot built using HTML, CSS, and JavaScript, integrated with the Groq API for generating AI responses.
+A full-stack AI chatbot application built with HTML, CSS, JavaScript, Node.js, and the Groq API.
 
 ## ✨ Features
 
-- Simple chatbot interface
-- Send messages and receive AI-generated responses
+- AI-powered chatbot
+- Interactive chat interface
 - Groq API integration
-- Uses Llama 3 8B model
+- Llama 3 8B model
+- Node.js backend
+- Secure environment variable configuration
 - Scrollable chat interface
-- Lightweight frontend with no frameworks
+- Simple and lightweight UI
 
 ## 🛠️ Tech Stack
 
 - HTML5
 - CSS3
 - JavaScript
+- Node.js
+- Express.js
 - Groq API
 - Llama 3 8B
 
@@ -23,8 +27,11 @@ A simple web-based AI chatbot built using HTML, CSS, and JavaScript, integrated 
 
 ```text
 AI-Chatbot/
-│
 ├── chatbot.html
 ├── chatbot.css
 ├── chat.js
+├── server.js
+├── .gitignore
+├── package.json
+├── package-lock.json
 └── README.md
